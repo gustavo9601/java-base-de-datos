@@ -8,14 +8,25 @@ public class Producto {
     private int precio;
     private Date fechaRegistro;
 
+    private Categoria categoria;
+
     public Producto() {
     }
 
-    public Producto(Long id, String nombre, int precio, Date fechaRegistro) {
+    public Producto(Long id, String nombre, int precio, Date fechaRegistro, Categoria categoria) {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
         this.fechaRegistro = fechaRegistro;
+        this.categoria = categoria;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     public Long getId() {
@@ -57,6 +68,7 @@ public class Producto {
                 ", nombre='" + nombre + '\'' +
                 ", precio=" + precio +
                 ", fechaRegistro=" + fechaRegistro +
+                ", categoria=" + this.getCategoria() +
                 '}';
     }
 }

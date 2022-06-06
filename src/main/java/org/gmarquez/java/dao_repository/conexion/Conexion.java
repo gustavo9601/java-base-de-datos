@@ -6,19 +6,14 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    private static String url = "jdbc:mysql://localhost:3306/java_curso_1?serverTimezone=America/Bogota";
-    private static String usuario = "root";
-    private static String password = "";
-    private static Connection instance = null;
-
     private Conexion() {
     }
 
     public static Connection getInstance() throws SQLException {
-        if (instance == null) {
-            instance = DriverManager.getConnection(url, usuario, password);
-        }
-        return instance;
+        String usuario = "root";
+        String password = "";
+        String url = "jdbc:mysql://localhost:3306/java_curso_1?serverTimezone=America/Bogota";
+        return  DriverManager.getConnection(url, usuario, password);
     }
 
 

@@ -1,6 +1,7 @@
 package org.gmarquez.java.dao_repository.repository;
 
 import org.gmarquez.java.dao_repository.conexion.Conexion;
+import org.gmarquez.java.dao_repository.modelo.Categoria;
 import org.gmarquez.java.dao_repository.modelo.Producto;
 
 import java.sql.*;
@@ -18,7 +19,7 @@ public class ProductoRepositorio implements Repositorio<Producto> {
         List<Producto> productos = new ArrayList<>();
 
         try (Statement statement = getConnection().createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM productos")) {
+             ResultSet resultSet = statement.executeQuery("SELECT p.*, c.nombre nombre_categoria FROM productos p INNER JOIN categorias c on p.categoria_id = c.id")) {
 
             while (resultSet.next()) {
                 Producto producto = crearProducto(resultSet);
@@ -40,6 +41,10 @@ public class ProductoRepositorio implements Repositorio<Producto> {
         producto.setNombre(resultSet.getString("nombre"));
         producto.setPrecio(resultSet.getInt("precio"));
         producto.setFechaRegistro(resultSet.getDate("fecha_registro"));
+
+        Categoria categoria = new Categoria(resultSet.getLong("categoria_id"), resultSet.getString("nombre_categoria"));
+        producto.setCategoria(categoria);
+
         return producto;
     }
 
@@ -47,7 +52,7 @@ public class ProductoRepositorio implements Repositorio<Producto> {
     public Producto buscarPorId(Long id) {
         Producto producto = new Producto();
 
-        try (PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM productos WHERE id = ?")) {
+        try (PreparedStatement statement = getConnection().prepareStatement("SELECT p.*, c.nombre nombre_categoria FROM productos p INNER JOIN categorias c on p.categoria_id = c.id WHERE p.id = ?")) {
             // Bindiamos los parametrs  .tipo(posicion en el query, valor)
             statement.setLong(1, id);
             // EJecutamos la consulta
@@ -71,9 +76,9 @@ public class ProductoRepositorio implements Repositorio<Producto> {
     public Producto guardar(Producto producto) {
         String sql;
         if (producto.getId() != null && producto.getId() > 0) {
-            sql = "UPDATE productos SET nombre = ?, precio = ?, fecha_registro = ? WHERE id = ?";
+            sql = "UPDATE productos SET nombre = ?, precio = ?, fecha_registro = ?, categoria_id = ? WHERE id = ?";
         } else {
-            sql = "INSERT INTO productos (nombre, precio, fecha_registro) VALUES (?, ?, ?)";
+            sql = "INSERT INTO productos (nombre, precio, fecha_registro, categoria_id) VALUES (?, ?, ?, ?)";
         }
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
@@ -81,9 +86,10 @@ public class ProductoRepositorio implements Repositorio<Producto> {
             statement.setString(1, producto.getNombre());
             statement.setInt(2, producto.getPrecio());
             statement.setDate(3, new Date(producto.getFechaRegistro().getTime()));
+            statement.setLong(4, producto.getCategoria().getId());
             // Si es un update
             if (producto.getId() != null && producto.getId() > 0) {
-                statement.setLong(4, producto.getId());
+                statement.setLong(5, producto.getId());
             }
 
             // Ejecutamos el query
@@ -98,13 +104,13 @@ public class ProductoRepositorio implements Repositorio<Producto> {
 
     @Override
     public void eliminar(Long id) {
-        try(PreparedStatement statement = getConnection().prepareStatement("DELETE FROM productos WHERE id = ?")){
+        try (PreparedStatement statement = getConnection().prepareStatement("DELETE FROM productos WHERE id = ?")) {
             // Bindiamos los parametros
             statement.setLong(1, id);
             // Ejecutamos el query
             statement.executeUpdate();
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error al eliminar producto");
             e.printStackTrace();
         }
