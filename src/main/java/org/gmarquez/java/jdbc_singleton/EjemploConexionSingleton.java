@@ -21,7 +21,6 @@ public class EjemploConexionSingleton {
                 System.out.print(resultado.getString("nombre") + "\t");
                 System.out.print(resultado.getInt("precio") + "\t");
                 System.out.println(resultado.getDate("fecha_registro"));
-
             }
 
         } catch (SQLException e) {
