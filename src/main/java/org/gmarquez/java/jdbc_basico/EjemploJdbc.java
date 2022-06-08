@@ -1,4 +1,4 @@
-package org.gmarquez.java.jdbc;
+package org.gmarquez.java.jdbc_basico;
 
 import java.sql.*;
 
