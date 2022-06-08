@@ -12,7 +12,7 @@ public class ConexionBaseDatos {
     private static String password = "";
     private static BasicDataSource pool;
 
-    public static BasicDataSource getInstance() throws SQLException {
+    public static BasicDataSource getInstance()  {
         if (pool == null) {
             pool = new BasicDataSource();
             pool.setUrl(url);
